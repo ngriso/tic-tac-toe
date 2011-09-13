@@ -1,9 +1,9 @@
 package com.xebia.xke;
 
 public class LastFieldEmptyStrategy implements Game.Strategy {
-    public int play(Game game) {
+    public int play(Game.Board board) {
         for (int x = 8; x >= 0; x--) {
-            if (game.grid[x] == 0) {
+            if (board.grid[x] == 0) {
                 return x;
             }
         }

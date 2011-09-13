@@ -1,72 +1,63 @@
 package com.xebia.xke;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game {
 
-    public int[] grid = new int[9];
-    int nbFieldTaken;
-    private int currentPlayer;
-    private int lastPlayedField;
-
-    public Game copy() {
-        Game game = new Game();
-        game.grid = Arrays.copyOf(this.grid, 9);
-        game.nbFieldTaken = this.nbFieldTaken;
-        return game;
-    }
+    Board board = new Board();
+    private int currentPlayer = -1;
 
     public void run(Strategy s1, Strategy s2) {
-        currentPlayer = -1;
+        Map<Integer, Strategy> players = new HashMap<Integer, Strategy>();
+        players.put(-1, s2);
+        players.put(1, s1);
         play(s1, s2);
-        boolean gameOver = isGameOver();
-        if (gameOver) {
-            System.out.println("Game over");
-            return;
-        }
-        System.out.println(currentPlayer + " has won");
+        System.out.println(board.isFull ? "Game over" : players.get(currentPlayer) + " has won");
     }
 
     public boolean play(Strategy s1, Strategy s2) {
         currentPlayer *= -1;
-        lastPlayedField = s1.play(this.copy());
-        play();
-        return isBoardWinnning() || isGameOver() || play(s2, s1);
+        int field = s1.play(this.board.copy());
+        board.play(field, currentPlayer);
+        return board.isBoardWinning || board.isFull || play(s2, s1);
     }
 
-    public void play() {
-        if (grid[lastPlayedField] != 0) {
-            throw new IllegalArgumentException("field already taken");
+    public static class Board {
+        public int[] grid = new int[9];
+        public int nbFieldTaken;
+        public boolean isBoardWinning;
+        public boolean isFull;
+
+        public void play(int field, int player) {
+            if (grid[field] != 0) {
+                throw new IllegalArgumentException("field already taken");
+            }
+            nbFieldTaken++;
+            grid[field] = player;
+            isBoardWinning =
+                    isWinning(grid[(field / 3 * 3)] + grid[1 + field / 3 * 3] + grid[2 + field / 3 * 3]) ||
+                            isWinning(grid[(field % 3)] + grid[3 + field % 3] + grid[6 + field % 3]) ||
+                            isWinning(grid[0] + grid[4] + grid[8]) || isWinning(grid[6] + grid[4] + grid[2]);
+            isFull = nbFieldTaken == 9;
         }
-        nbFieldTaken++;
-        grid[lastPlayedField] = currentPlayer;
-    }
 
-    public boolean isGameOver() {
-        return nbFieldTaken == 9;
-    }
+        private boolean isWinning(int sum) {
+            return Math.abs(sum) == 3;
+        }
 
-    public boolean isBoardWinnning() {
-        return isRowWinning(lastPlayedField / 3) || isColumnWinning(lastPlayedField % 3) || areDiagonalsWinning();
-    }
-
-    public boolean areDiagonalsWinning() {
-        return isWinning(grid[0] + grid[4] + grid[8]) || isWinning(grid[6] + grid[4] + grid[2]);
-    }
-
-    public boolean isRowWinning(int y) {
-        return isWinning(grid[y * 3] + grid[1 + y * 3] + grid[2 + y * 3]);
-    }
-
-    public boolean isColumnWinning(int x) {
-        return isWinning(grid[x] + grid[3 + x] + grid[6 + x]);
-    }
-
-    private boolean isWinning(int sum) {
-        return Math.abs(sum) == 3;
+        public Board copy() {
+            Board board = new Board();
+            board.grid = Arrays.copyOf(this.grid, 9);
+            board.nbFieldTaken = this.nbFieldTaken;
+            board.isBoardWinning = this.isBoardWinning;
+            board.isFull = this.isFull;
+            return board;
+        }
     }
 
     public static interface Strategy {
-        int play(Game game);
+        int play(Board board);
     }
 }
