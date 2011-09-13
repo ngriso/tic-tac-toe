@@ -12,14 +12,14 @@ public class Game {
         Map<Integer, Strategy> players = new HashMap<Integer, Strategy>();
         players.put(-1, s2);
         players.put(1, s1);
-        int winner = play2(s1, s2, 1);
+        int winner = play(s1, s2, 1);
         System.out.println(board.isFull ? "Game over" : players.get(winner) + " has won");
     }
 
-    public int play2(Strategy s1, Strategy s2, int currentPlayer) {
+    public int play(Strategy s1, Strategy s2, int currentPlayer) {
         int field = s1.play(this.board.copy());
         board.play(field, currentPlayer);
-        return board.isBoardWinning || board.isFull ? currentPlayer : play2(s2, s1, currentPlayer*-1);
+        return board.isBoardWinning || board.isFull ? currentPlayer : play(s2, s1, currentPlayer*-1);
     }
 
     public static class Board {
