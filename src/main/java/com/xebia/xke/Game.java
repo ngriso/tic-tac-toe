@@ -11,7 +11,7 @@ public class Game {
         System.out.println(board.isBoardWinning ? winner + " has won" : "Game over");
     }
 
-    public Strategy play(Strategy s1, Strategy s2, int currentPlayer) {
+    Strategy play(Strategy s1, Strategy s2, int currentPlayer) {
         int field = s1.play(this.board.copy());
         board.play(field, currentPlayer);
         return board.isBoardWinning || board.isFull ? s1 : play(s2, s1, currentPlayer * -1);
