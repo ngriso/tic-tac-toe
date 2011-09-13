@@ -1,34 +1,53 @@
 package com.xebia.xke;
 
+import java.util.Arrays;
+
 public class Game {
 
     public int[] grid = new int[9];
     int nbFieldTaken;
+    private int currentPlayer;
+    private int lastPlayedField;
+
+    public Game copy() {
+        Game game = new Game();
+        game.grid = Arrays.copyOf(this.grid, 9);
+        game.nbFieldTaken = this.nbFieldTaken;
+        return game;
+    }
 
     public void run(Strategy s1, Strategy s2) {
-        play(s1, s2, 1);
+        currentPlayer = -1;
+        play(s1, s2);
+        boolean gameOver = isGameOver();
+        if (gameOver) {
+            System.out.println("Game over");
+            return;
+        }
+        System.out.println(currentPlayer + " has won");
     }
 
-    boolean play(Strategy s1, Strategy s2, int player) {
-        int field = s1.play(this);
-        play(field, player);
-        return isBoardWinnning(field) || isGameOver() || play(s2, s1, -1 * player);
+    public boolean play(Strategy s1, Strategy s2) {
+        currentPlayer *= -1;
+        lastPlayedField = s1.play(this.copy());
+        play();
+        return isBoardWinnning() || isGameOver() || play(s2, s1);
     }
 
-    boolean isGameOver() {
-        return nbFieldTaken == 9;
-    }
-
-    boolean isBoardWinnning(int field) {
-        return isRowWinning(field / 3) || isColumnWinning(field % 3) || areDiagonalsWinning();
-    }
-
-    void play(int field, int player) {
-        if (grid[field] != 0) {
+    public void play() {
+        if (grid[lastPlayedField] != 0) {
             throw new IllegalArgumentException("field already taken");
         }
         nbFieldTaken++;
-        grid[field] = player;
+        grid[lastPlayedField] = currentPlayer;
+    }
+
+    public boolean isGameOver() {
+        return nbFieldTaken == 9;
+    }
+
+    public boolean isBoardWinnning() {
+        return isRowWinning(lastPlayedField / 3) || isColumnWinning(lastPlayedField % 3) || areDiagonalsWinning();
     }
 
     public boolean areDiagonalsWinning() {
@@ -43,7 +62,7 @@ public class Game {
         return isWinning(grid[x] + grid[3 + x] + grid[6 + x]);
     }
 
-    public boolean isWinning(int sum) {
+    private boolean isWinning(int sum) {
         return Math.abs(sum) == 3;
     }
 
