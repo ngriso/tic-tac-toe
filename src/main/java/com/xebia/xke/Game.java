@@ -30,14 +30,11 @@ public class Game {
             nbFieldTaken++;
             grid[field] = player;
             isBoardWinning =
-                    isWinning(grid[(field / 3 * 3)] + grid[1 + field / 3 * 3] + grid[2 + field / 3 * 3]) ||
-                            isWinning(grid[(field % 3)] + grid[3 + field % 3] + grid[6 + field % 3]) ||
-                            isWinning(grid[0] + grid[4] + grid[8]) || isWinning(grid[6] + grid[4] + grid[2]);
+                    Math.abs(grid[(field / 3 * 3)] + grid[1 + field / 3 * 3] + grid[2 + field / 3 * 3]) == 3 ||
+                            Math.abs(grid[(field % 3)] + grid[3 + field % 3] + grid[6 + field % 3]) == 3 ||
+                            Math.abs(grid[0] + grid[4] + grid[8]) == 3 ||
+                            Math.abs(grid[6] + grid[4] + grid[2]) == 3;
             isFull = nbFieldTaken == 9;
-        }
-
-        private boolean isWinning(int sum) {
-            return Math.abs(sum) == 3;
         }
 
         public Board copy() {
