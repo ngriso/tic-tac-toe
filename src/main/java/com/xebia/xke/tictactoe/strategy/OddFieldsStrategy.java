@@ -1,8 +1,10 @@
-package com.xebia.xke;
+package com.xebia.xke.tictactoe.strategy;
 
-public class EvenFieldsStrategy implements Game.Strategy {
+import com.xebia.xke.tictactoe.Game;
+
+public class OddFieldsStrategy implements Game.Strategy {
     public int play(Game.Board board) {
-        for (int x = 0; x < 9; x+=2) {
+        for (int x = 1; x < 9; x+=2) {
             if (board.grid[x] == 0) {
                 return x;
             }

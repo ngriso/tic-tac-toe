@@ -1,4 +1,4 @@
-package com.xebia.xke;
+package com.xebia.xke.tictactoe;
 
 import java.util.Arrays;
 
@@ -6,9 +6,14 @@ public class Game {
 
     Board board = new Board();
 
-    public void run(Strategy s1, Strategy s2) {
+    public Result run(Strategy s1, Strategy s2) {
+        board = new Board();
         Strategy winner = play(s1, s2, 1);
-        System.out.println(board.isBoardWinning ? winner + " has won" : "Game over");
+
+        if (!board.isBoardWinning) {
+            return Result.NO_WINNER;
+        }
+        return winner == s1 ? Result.PLAYER1_WIN : Result.PLAYER2_WIN;
     }
 
     Strategy play(Strategy s1, Strategy s2, int currentPlayer) {
@@ -49,5 +54,11 @@ public class Game {
 
     public static interface Strategy {
         int play(Board board);
+    }
+
+    public enum Result {
+        NO_WINNER,
+        PLAYER1_WIN,
+        PLAYER2_WIN
     }
 }

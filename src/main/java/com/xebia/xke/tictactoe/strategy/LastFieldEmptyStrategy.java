@@ -1,4 +1,7 @@
-package com.xebia.xke;
+package com.xebia.xke.tictactoe.strategy;
+
+import com.xebia.xke.tictactoe.Game;
+import com.xebia.xke.tictactoe.Game;
 
 public class LastFieldEmptyStrategy implements Game.Strategy {
     public int play(Game.Board board) {
