@@ -6,6 +6,14 @@ public class Game {
 
     Board board = new Board();
 
+    public Result run(Player p1, Player p2) {
+
+        System.out.println(p1.name + " is player 1");
+        System.out.println(p2.name + " is player 2");
+
+        return run(p1.strategy, p2.strategy);
+    }
+
     public Result run(Strategy s1, Strategy s2) {
         board = new Board();
         Strategy winner = play(s1, s2, 1);
@@ -30,7 +38,7 @@ public class Game {
 
         public void play(int field, int player) {
             if (grid[field] != 0) {
-                throw new IllegalArgumentException("field already taken");
+                throw new IllegalArgumentException(String.format("field %s is already taken", field));
             }
             nbFieldTaken++;
             grid[field] = player;
